@@ -667,12 +667,21 @@ nav#at_the_top h1 {
 nav#at_the_top img#logo-small,
 nav#at_the_top img#logo-big {
     height: 39px;
-    margin-bottom: -8px;
+    margin-bottom: 1px;
+    opacity: 0.5;
     filter: var(--image-filters);
 }
 
 nav#at_the_top img#logo-small {
     display: none;
+}
+
+nav#at_the_top img#logo-small:hover {
+    opacity: 1;
+}
+
+nav#at_the_top img#logo-big:hover {
+    opacity: 1;
 }
 
 @media (max-width: 800px) {
@@ -2258,7 +2267,7 @@ dropruler {
 pluto-helpbox {
     bottom: 0px;
     right: 20px;
-    position: absolute;
+    position: fixed;
     display: flex;
     flex-direction: column;
     width: calc(100vw - 50px - (700px + 25px + 6px)); /* compat */

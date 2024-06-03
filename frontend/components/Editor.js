@@ -15,7 +15,6 @@ import { BottomRightPanel } from "./BottomRightPanel.js"
 import { DropRuler } from "./DropRuler.js"
 import { SelectionArea } from "./SelectionArea.js"
 import { RecentlyDisabledInfo, UndoDelete } from "./UndoDelete.js"
-import { SlideControls } from "./SlideControls.js"
 import { Scroller } from "./Scroller.js"
 import { ExportBanner } from "./ExportBanner.js"
 import { Popup } from "./Popup.js"
@@ -257,8 +256,8 @@ const first_true_key = (obj) => {
  * }}
  */
 
-const url_logo_big = document.head.querySelector("link[rel='pluto-logo-big']")?.getAttribute("href") ?? ""
-export const url_logo_small = document.head.querySelector("link[rel='pluto-logo-small']")?.getAttribute("href") ?? ""
+const url_logo_big = document.head.querySelector("link[rel='eris-logo-home']")?.getAttribute("href") ?? ""
+export const url_logo_small = document.head.querySelector("link[rel='eris-logo-home']")?.getAttribute("href") ?? ""
 
 /**
  * @typedef EditorProps
@@ -1557,7 +1556,7 @@ The notebook file saves every time you run a cell.`
                             <a href=${
                                 this.state.binder_session_url != null ? `${this.state.binder_session_url}?token=${this.state.binder_session_token}` : "./"
                             }>
-                                <h1><img id="logo-big" src=${url_logo_big} alt="Pluto.jl" /><img id="logo-small" src=${url_logo_small} /></h1>
+                                <h1><img id="logo-big" width="25" src=${url_logo_big} alt="Eris.jl" /><img id="logo-small" src=${url_logo_small} alt="Eris.jl" /></h1>
                             </a>
                             ${
                                 this.state.extended_components.CustomHeader &&
@@ -1723,18 +1722,6 @@ The notebook file saves every time you run a cell.`
                             })
                         }}
                     />
-                    <${SlideControls} />
-                    <footer>
-                        <div id="info">
-                            <a href="https://github.com/fonsp/Pluto.jl/wiki" target="_blank">FAQ</a>
-                            <span style="flex: 1"></span>
-                            <form id="feedback" action="#" method="post">
-                                <label for="opinion">🙋 How can we make <a href="https://plutojl.org/" target="_blank">Pluto.jl</a> better?</label>
-                                <input type="text" name="opinion" id="opinion" autocomplete="off" placeholder="Instant feedback..." />
-                                <button>Send</button>
-                            </form>
-                        </div>
-                    </footer>
                 </${PlutoJSInitializingContext.Provider}>
                 </${PlutoBondsContext.Provider}>
             </${PlutoActionsContext.Provider}>

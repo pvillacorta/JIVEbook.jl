@@ -6,7 +6,7 @@ import REPL
 import Pkg
 import Pkg.Types: VersionRange
 import RegistryInstances
-import ..Pluto
+import ..Eris
 
 const PRESERVE_ALL_INSTALLED = isdefined(Pkg, :PRESERVE_ALL_INSTALLED) ? Pkg.PRESERVE_ALL_INSTALLED : Pkg.PRESERVE_ALL
 
@@ -402,7 +402,7 @@ function dependencies(ctx)
 			to reset this notebook's environment.
 
 			Before doing so, consider sending your notebook file to https://github.com/fonsp/Pluto.jl/issues together with the following info:
-			""" Pluto.PLUTO_VERSION VERSION exception=(e,catch_backtrace())
+			""" Eris.ERIS_VERSION VERSION exception=(e,catch_backtrace())
 		end
 
 		Dict()
