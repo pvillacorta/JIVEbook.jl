@@ -1,6 +1,7 @@
 
 
-const _notebook_header = "### An Eris.jl notebook ###"
+const _notebook_header = "### A JIVEbook.jl notebook ###"
+const _pluto_notebook_header = "### A Pluto.jl notebook ###"
 const _notebook_metadata_prefix = "#> "
 # We use a creative delimiter to avoid accidental use in code
 # so don't get inspired to suddenly use these in your code!
@@ -31,7 +32,7 @@ Have a look at our [JuliaCon 2020 presentation](https://youtu.be/IAF8DjrQSSk?t=1
 """
 function save_notebook(io::IO, notebook::Notebook)
     println(io, _notebook_header)
-    println(io, "# ", ERIS_VERSION_STR)
+    println(io, "# ", JIVEBOOK_VERSION_STR)
     
     # Notebook metadata
     let nb_metadata_toml = strip(sprint(TOML.print, get_metadata_no_default(notebook)))
@@ -158,7 +159,7 @@ save_notebook(notebook::Notebook) = save_notebook(notebook, notebook.path)
 function _notebook_metadata!(@nospecialize(io::IO))
     firstline = String(readline(io))::String
 
-    if firstline != _notebook_header
+    if firstline != _notebook_header && firstline != _pluto_notebook_header
         error(
             if occursin("<!DOCTYPE", firstline) || occursin("<html", firstline)
                 """File is an HTML file, not a notebook file. Open the file directly, and click the "Edit or run" button to get the notebook file."""
@@ -169,8 +170,8 @@ function _notebook_metadata!(@nospecialize(io::IO))
     end
 
     file_VERSION_STR = readline(io)[3:end]
-    if file_VERSION_STR != ERIS_VERSION_STR
-        # @info "Loading a notebook saved with Pluto $(file_VERSION_STR). This is Pluto $(ERIS_VERSION_STR)."
+    if file_VERSION_STR != JIVEBOOK_VERSION_STR
+        # @info "Loading a notebook saved with Pluto $(file_VERSION_STR). This is Pluto $(JIVEBOOK_VERSION_STR)."
     end
 
     # Read all remaining file contents before the first cell delimiter.
