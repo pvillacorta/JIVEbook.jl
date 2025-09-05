@@ -2,7 +2,7 @@
 
 JIVEbook is a Notebook platform for scientific programing in Julia using the JIVE framework. JIVEbook is based on Pluto.jl. 
 
-JIVEbook notebooks are: 
+JIVEbook notebooks are:
 
 - _lightweight_ - JIVEbook is based on the package Pluto. Both are written in pure Julia and is easy to install.
 - _simple_ - no hidden workspace state; friendly UI.
