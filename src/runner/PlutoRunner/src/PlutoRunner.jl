@@ -25,6 +25,7 @@ import InteractiveUtils
 import JIVECore
 import PlutoPlotly
 import PlutoUI
+import PlotlyBase
 
 using Markdown
 import Markdown: html, htmlinline, LaTeX, withtag, htmlesc
@@ -37,6 +38,7 @@ import Logging
 import REPL
 
 export @bind
+export create_plotly_visualizer, create_plotly_listener, create_plotly_graph, record_plotly_shapes, pass_plotly_shape, modify_plotly_shape
 
 # This is not a struct to make it easier to pass these objects between processes.
 const MimedOutput = Tuple{Union{String,Vector{UInt8},Dict{Symbol,Any}},MIME}
@@ -2390,7 +2392,100 @@ end"""
 
 
 
+###
+# PLOTLY
+##
 
+function create_plotly_shape!(shapes_dict::Dict, d::Dict)
+    key = JIVECore.Data.keyCheck(shapes_dict,"0")
+    shapes_dict[key] = d
+end
+
+function modify_plotly_shape!(shapes_dict::Dict, d::Dict)
+    key = split(split(d["shape"],"[")[2],"]")[1]
+    d["shape"] = shapes_dict[key]["shape"]
+    shapes_dict[key] = d
+end
+
+function pass_plotly_shape(shapes_dict::Dict, d::Dict)
+    return nothing
+end
+
+function record_plotly_shapes(shape::String)
+    
+    shapes = Dict(
+        "rect" => create_plotly_shape!,
+        "circ" => create_plotly_shape!,
+        "line" => create_plotly_shape!,
+        "shap" => modify_plotly_shape!,
+    )
+    
+    get(shapes, shape[1:4]) do
+        return pass_plotly_shape
+    end
+end
+
+function create_plotly_graph(graph::Union{String,Symbol})
+    graph_symbol = Symbol(graph)
+    graph_functions = Dict(
+        :heatmap => PlotlyBase.heatmap,
+        :scatter => PlotlyBase.scatter,
+    )
+    
+    get(graph_functions, graph_symbol) do
+        error("Unsupported graph type: $graph")
+    end
+end
+
+function create_plotly_visualizer(r, graph::String)
+    img_width, img_height = size(r)
+    
+    plt = create_plotly_graph(graph)
+
+    trace = plt(z=Float32.(JIVECore.Images.ColorTypes.Gray.(r)),colorscale="Greys")
+    
+    layout = PlotlyBase.Layout(
+        template=PlotlyBase.templates.seaborn,
+        xaxis = PlotlyBase.attr(showgrid=false, range=(0,img_width)),
+        yaxis = PlotlyBase.attr(showgrid=false, scaleanchor="x", range=(img_height, 0)),
+        dragmode="drawrect",
+        newshape = PlotlyBase.attr(line_color="cyan", line_width=2, opacity=0.5),
+        # title_text="Drag to add annotations - use modebar to change drawing tool",
+        modebar_add=[
+            "drawline",
+            # "drawopenpath", # path elements are not supported yet 
+            # "drawclosedpath",
+            "lasso",
+            "drawcircle",
+            "drawrect",
+            "eraseshape"
+        ],
+    )
+    
+    PlutoPlotly.plot(trace,layout)
+    
+end
+
+function create_plotly_listener(q)
+    PlutoPlotly.add_plotly_listener!(q,"plotly_relayout", "
+             function(e){
+                    console.log(e)
+                    if (e.hasOwnProperty('shapes')){
+                            let s = e.shapes
+                          let dt = s[s.length-1]
+                            PLOT.value = {shape: dt.type, x0: dt.x0, x1: dt.x1, y0: dt.y0, y1: dt.y1}
+                            PLOT.dispatchEvent(new CustomEvent('input'))
+                    } else {
+                            console.log(Object.getOwnPropertyNames(e))
+                            let sh = Object.getOwnPropertyNames(e)[0]
+                            let xy = Object.values(e)
+                            PLOT.value = {shape: sh, x0: xy[0], x1: xy[1], y0: xy[2], y1: xy[3]}
+                            PLOT.dispatchEvent(new CustomEvent('input'))
+                    }
+                    
+            }
+        ")
+    end
 
 
 
